@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+<br>
+<br><br>
+<br><br><br>
+
+<div class="info">
+
+  <div class="container">
+
+    <div class="row row-eq-height">
+      {% for d in doctors  %}
+      <div class="col-lg-4 info_box_col">
+        <div class="info_box">
+          <div class="info_image"><img src="{{ d.image.url}}" width="100%" height="200px" alt=""></div>
+          <div class="info_content">
+            <div class="info_title">{{d.name}} {{d.surname}}</div>
+            <div class="info_text">{{d.clinic.name}} {{d.position}}</div>
+
+
+            <br>
+            <form action="" method="POST">
+              {% csrf_token %}
+              <div class='starrr' id='star1' data-id="{{d.id}}" data-count1='' data-user="{{request.user}}"
+                data-count='{{d.rating}}'>
+
+              </div>
+            </form>
+            <div>&nbsp;
+              <span class='your-choice-was' style='display: none;'>
+                Your rating was <span class='choice'></span>.
+              </span>
+            </div>
+
+            <div class="button info_button"><a href="{% url 'description_doctor' d.id %}"><span>daha
+              ətraflı</span><span>daha ətraflı
+            </span></a></div>
+             
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+      {% endfor %}
+
+    </div>
+  </div>
+</div>
+
+
+<!-- <script src="jquery.js"></script> -->
+
+<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+
+  <script>
+
+
+  $('.starrr').each(function () {
+    val = $(this).data('count')
+
+    var slice = [].slice;
+
+    (function ($, window) {
+      var Starrr;
+      window.Starrr = Starrr = (function () {
+        Starrr.prototype.defaults = {
+          rating: void val,
+          max: 5,
+          readOnly: false,
+          emptyClass: 'fa fa-star-o',
+          fullClass: 'fa fa-star',
+          change: function (e, value) { }
+        };
+
+        function Starrr($el, options) {
+          this.options = $.extend({}, this.defaults, options);
+          this.$el = $el;
+          this.createStars();
+          this.syncRating();
+          if (this.options.readOnly) {
+            return;
+          }
+          this.$el.on('mouseover.starrr', 'a', (function (_this) {
+            return function (e) {
+              return _this.syncRating(_this.getStars().index(e.currentTarget) + 1);
+            };
+          })(this));
+          this.$el.on('mouseout.starrr', (function (_this) {
+            return function () {
+              return _this.syncRating();
+            };
+          })(this));
+          this.$el.on('click.starrr', 'a', (function (_this) {
+            return function (e) {
+              e.preventDefault();
+              return _this.setRating(_this.getStars().index(e.currentTarget) + 1);
+            };
+          })(this));
+          this.$el.on('starrr:change', this.options.change);
+        }
+
+        Starrr.prototype.getStars = function () {
+          return this.$el.find('a');
+        };
+
+        Starrr.prototype.createStars = function () {
+          var j, ref, results;
+          results = [];
+          for (j = 1, ref = this.options.max; 1 <= ref ? j <= ref : j >= ref; 1 <= ref ? j++ : j--) {
+            results.push(this.$el.append("<a href='#'  />"));
+
+          }
+          return results;
+        };
+
+        Starrr.prototype.setRating = function (rating = val) {
+          if (this.options.rating === rating) {
+            rating = void 0;
+          }
+          this.options.rating = rating;
+          this.syncRating();
+          return this.$el.trigger('starrr:change', rating);
+        };
+
+        Starrr.prototype.getRating = function () {
+          return this.options.rating;
+        };
+
+        Starrr.prototype.syncRating = function (rating = val) {
+          var $stars, i, j, ref, results;
+          rating || (rating = this.options.rating);
+          $stars = this.getStars();
+          results = [];
+          for (i = j = 1, ref = this.options.max; 1 <= ref ? j <= ref : j >= ref; i = 1 <= ref ? ++j : --j) {
+            results.push($stars.eq(i - 1).removeClass(rating >= i ? this.options.emptyClass : this.options.fullClass).addClass(rating >= i ? this.options.fullClass : this.options.emptyClass));
+          }
+          return results;
+        };
+
+        return Starrr;
+
+      })();
+      return $.fn.extend({
+        starrr: function () {
+          var args, option;
+          option = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+          return this.each(function () {
+            var data;
+            data = $(this).data('starrr');
+            if (!data) {
+              $(this).data('starrr', (data = new Starrr($(this), option)));
+            }
+            if (typeof option === 'string') {
+              return data[option].apply(data, args);
+            }
+          });
+        }
+      });
+    })(window.jQuery, window);
+
+    $(this).starrr({
+      change: function (e, value) {
+        e.preventDefault()
+        // console.log($(this).val())
+        // $('div').data('info', '222');
+        // $(this).data('count',value)
+        $(this).attr('data-count1', value)
+        count = $(this).data('count1')
+        count_m = $(this).data('count')
+        
+        last = (parseInt($(this).data("count")) + parseInt($(this).data("count1"))) / 2
+        last=Math.round(last)
+        $(this).attr('data-count', last)
+        user = $(this).data('user')
+        id = $(this).data('id')
+        
+        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+        $.ajax({
+          url: "/ajaxify_rating_doctor/",
+          method: 'POST',
+          data: {
+
+            "csrfmiddlewaretoken": csrftoken,
+            "user": user,
+            'id': id,
+            "count": count,
+
+          }, success: function (data) {
+            console.log('success')
+              setTimeout(function () {// wait for 5 secs(2)
+                location.reload(); // then reload the page.(3)
+              }, 100);
+            
+          }
+        }).then(function (resp) {
+          console.log(resp)
+
+        })
+      }
+
+
+    })
+  })
+  
+</script> 
+ 
+{% endblock content %}

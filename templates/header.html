@@ -1,0 +1,79 @@
+{% load socialaccount %}
+{% providers_media_js %}
+<header class="header" id="header">
+	<div>
+		<div class="header_top">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<div class="header_top_content d-flex flex-row align-items-center justify-content-start">
+							<div class="logo">
+								<a href="{% url 'main' %}">Healthy Life<span> +</span></a>
+							</div>
+							<div
+								class="header_top_extra d-flex flex-row align-items-center justify-content-start ml-auto">
+								<div class="header_top_nav">
+									<ul class="d-flex flex-row align-items-center justify-content-start">
+										<li><a href="{% url 'main' %}">Kömək</a></li>
+										<li><a href="{% url 'main' %}">Təcili yardım</a></li>
+										<li><a href="https://hekimtap.az">Həkim qəbulu</a></li>
+									</ul>
+								</div>
+								<div class="header_top_phone" style="padding-left: 5px">
+									{% if user.is_authenticated %}
+								    <img src="{{user.socialaccount_set.all.0.get_avatar_url}}" class=" rounded-circle"
+										width="60px" height="50px" alt="" style="padding-left: 5px">
+
+								{{user.first_name}} {{user.last_name}}	
+									<a href="/logout/" style="padding-left: 10px">Logout</a>
+									 
+									{% else %}
+									<!-- <a href="/login/" >Daxil ol</a> -->
+								 <a href="{% provider_login_url "facebook" method="js_sdk" %}" class='logout'>Daxil ol </a> 
+
+									{% endif %}
+									
+									
+								</div>
+							</div>
+							<div class="hamburger ml-auto"><i class="fa fa-bars" aria-hidden="true"></i></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="header_nav" id="header_nav_pin">
+			<div class="header_nav_inner">
+				<div class="header_nav_container">
+					<div class="container">
+						<div class="row">
+							<div class="col">
+								<div
+									class="header_nav_content d-flex flex-row align-items-center justify-content-start">
+									<nav class="main_nav">
+										<ul class="d-flex flex-row align-items-center justify-content-start">
+											<li class="active"><a href="{% url 'main' %}">Əsas Səhifə</a></li>
+											{% comment %} <li><a href="{% url 'main' %}">Xəstəxanalar</a></li> {% endcomment %}
+											<li><a href="{% url 'doctors' %}">Həkimlər</a></li>
+											<li><a href="{% url 'home' %}">Xəbərlər</a></li>
+											<li><a href="{% url 'main' %}">Əlaqə</a></li>
+										</ul>
+									</nav>
+									<div
+										class="search_content d-flex flex-row align-items-center justify-content-end ml-auto">
+										<form action="{% url 'main' %}" method="GET" id="search_container_form" class="search_container_form">
+											<input name = "q" type="text" class="search_container_input" placeholder="Axtarış"
+												required="required">
+											<button class="search_container_button"><i class="fa fa-search"
+													aria-hidden="true"></i></button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>

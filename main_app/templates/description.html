@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<br><br><br><br><br><br><br><br><br>
+<div class="container">
+  <div class="row">
+    <div class="col-9" style="float: left;">
+      <p>
+        <font size="6" style="color: black;font-family: 'bebas-neue', sans-serif;
+  font-size: 2.7em;
+  font-size: 2.08em;
+  font-weight: 300;
+  "><strong> {{clinic.name}} </strong></font>
+      </p>
+
+      {{clinic.address}}
+      <br>
+      {{clinic.number}}
+      <br>
+      <br>
+      <img src="{{ clinic.picture.url}}" alt="">
+      {% comment %} <a class="btn btn-default" href="{% url 'add_comment_to_post' clinic.id %}">Add comment</a>
+      {% endcomment %}
+
+      <br><br>
+
+
+      <form method="POST" class="post-form">{% csrf_token %}
+
+        {{ form.as_p }}
+        <br>
+        <button type="submit" style="float: center; "
+          class="btn btn-primary text-white px-5 mt-5 btn-lg">Göndər</button>
+      </form>
+    </div>
+    <div class="col-3" style="float: right;">
+      {% for hekim in hekimler  %}
+      <p>
+          
+        </p>
+      {% endfor %}
+       
+    </div>
+  </div>
+</div>
+
+{% comment %}
+<div class="info">
+  <div class="container">
+    <div class="row row-eq-height">
+
+      <div id="fb-root">
+        <div class="fb-comments" data-href="https://developers.facebook.com/docs/plugins/comments#configurator"
+          data-width="" data-numposts="{{clinic.id}}"></div>
+      </div> {% endcomment %}
+
+      <hr>
+      {% comment %} <a class="btn btn-default" href="{% url 'add_comment_to_post' clinic.id %}">Add comment</a>
+      {% endcomment %}
+
+
+
+      {% for comment in comments %}
+      <div class="well well-lg">
+        <div class="date">{{ comment.created_date }}</div>
+        <strong>{{ comment.author }}</strong>
+        <p><b>{{ comment.text|linebreaks }}</b></p>
+      </div>
+      {% empty %}
+      <p>No comment</p>
+      {% endfor %}
+
+      <div class="container">
+        <div class="mapouter col-sm-12 mt-5 px-0">
+            <div class="gmap_canvas">
+                <div class="div-map">
+                    <div style="height:400px;" id="map"></div>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id='lng' disabled value="{{lng}}">
+    <input type="hidden" id='lat' disabled value="{{lat}}">
+      {% endblock content %}
+      {% block scripts %}
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzjnO5f_DJlfKjOxgZ2PO7FEDTCMkDIiM&callback=initMap"
+          async defer></script>
+          <script>
+             function initMap() {
+            var lat1 = $('#lat').val()
+            var lng1 = $('#lng').val()
+console.log(lat1,lng1)            
+            // var lat1 = 40.3615255
+            // var lng1 = 49.8242288477811
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: { lat: Number(lat1), lng: Number(lng1) }
+            });
+
+            // var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+            var beachMarker = new google.maps.Marker({
+                position: { lat: Number(lat1), lng: Number(lng1) },
+                map: map,
+                // icon: image
+            });
+        }
+        </script>
+      {% endblock scripts %}
